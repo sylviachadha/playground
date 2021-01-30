@@ -1,24 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
+import {BrowserRouter, Route, Switch} from "react-router-dom";
+
+import Header  from "/Users/sylviachadha/WebstormProjects/playground/src/components/header";
+import Grid from "@material-ui/core/Grid";
+import dashboard from "./pages/dashboard";
+
+
 
 function App() {
+  const [value, setValue] = useState(0);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <BrowserRouter>
+        <Grid container direction={"column"}>
+          <Grid item>
+            <Header value={value} setValue={setValue}/>
+          </Grid>
+          <Grid item>
+            <Switch>
+              <Route exact path="/" component={dashboard}/>
+              <Route exact path="/home" component={dashboard}/>
+
+            </Switch>
+          </Grid>
+        </Grid>
+      </BrowserRouter>
   );
 }
 
