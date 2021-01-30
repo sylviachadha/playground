@@ -1,7 +1,7 @@
 import React, {useState,useEffect} from 'react';
 import {makeStyles} from "@material-ui/core/styles";
 import {Grid} from "@material-ui/core";
-import DateSelection from "/Users/sylviachadha/WebstormProjects/playground/src/components/dateselection";
+import DateSelection from "../components/dateselection";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import {Typography} from "@material-ui/core";
@@ -34,16 +34,17 @@ export default function Dashboard() {
 
     const [recentData,setRecentData] = useState([])
     const [ltData,setLt] = useState([])
+    const [gaugeData,setGaugeData] = useState(0)
 
-    useEffect(async () => {
-        const resp = await axios.get('http://localhost:8080/python-hiv-cases-by-age');
-        const responseObjParent = await JSON.parse(resp.data)
-        const  respObj = responseObjParent.result;
-        console.log(respObj)
 
-        // const respObj =  await JSON.parse(resp.data.result)
-        // setRecentData(respObj.recent)
-        // setLt(respObj.longTerm)
+    useEffect(() => {
+        (async () => {
+            const resp =  await axios.get('http://localhost:8080/python-retrieve-dashboard-data');
+            const respObj = resp.data
+            setRecentData(respObj.age_group.recent)
+            setLt(respObj.age_group.longTerm)
+            setGaugeData(respObj.gauge)
+        })();
     }, []);
 
     const classes = useStyles();
@@ -51,7 +52,7 @@ export default function Dashboard() {
     const Gauge1data = [
         {
             domain: {x: [0, 1], y: [0, 1]},
-            value: 90.1, number: {suffix: "%"},
+            value: gaugeData, number: {suffix: "%"},
             title: {text: "Tested by RTRI"},
             type: "indicator",
             mode: "gauge+number",

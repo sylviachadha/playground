@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 
-import Header  from "/Users/sylviachadha/WebstormProjects/playground/src/components/header";
+import Header  from "./components/header";
 import Grid from "@material-ui/core/Grid";
 import dashboard from "./pages/dashboard";
 
