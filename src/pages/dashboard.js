@@ -1,6 +1,6 @@
 import React, {useState,useEffect} from 'react';
 import {makeStyles} from "@material-ui/core/styles";
-import {Grid} from "@material-ui/core";
+import {Button, Grid} from "@material-ui/core";
 import DateSelection from "../components/dateselection";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -28,22 +28,38 @@ const useStyles = makeStyles(theme => ({
     DateGrid: {
        backgroundColor: '#e8eae6'
     },
+    button: {
+        marginTop: '1.5rem',
+        marginLeft: '1.5rem',
+        color: 'yellow'
+    },
 }))
 
 export default function Dashboard() {
 
-    const [recentData,setRecentData] = useState([])
-    const [ltData,setLt] = useState([])
-    const [gaugeData,setGaugeData] = useState(0)
+    const [ageRecentData,setAgeRecentData] = useState([])
+    const [ageLtData,setAgeLtData] = useState([])
+    const [rtriGaugeData,setRtriGaugeData] = useState(0)
+
+    const [startDate, setStartDate] = useState(new Date('2020-08-18T21:11:54'));
+    const [endDate, setEndDate] = useState(new Date('2021-01-29T21:11:54'));
+
+    const handleGoDate = async () => {
+            const resp =  await axios.get('http://localhost:8080/python-retrieve-dashboard-data');
+            const respPython = resp.data
+            setAgeRecentData(respPython.age_group.recent)
+            setAgeLtData(respPython.age_group.longTerm)
+            setRtriGaugeData(respPython.gauge)
+        }
 
 
     useEffect(() => {
         (async () => {
             const resp =  await axios.get('http://localhost:8080/python-retrieve-dashboard-data');
-            const respObj = resp.data
-            setRecentData(respObj.age_group.recent)
-            setLt(respObj.age_group.longTerm)
-            setGaugeData(respObj.gauge)
+            const respPython = resp.data
+            setAgeRecentData(respPython.age_group.recent)
+            setAgeLtData(respPython.age_group.longTerm)
+            setRtriGaugeData(respPython.gauge)
         })();
     }, []);
 
@@ -52,7 +68,7 @@ export default function Dashboard() {
     const Gauge1data = [
         {
             domain: {x: [0, 1], y: [0, 1]},
-            value: gaugeData, number: {suffix: "%"},
+            value: rtriGaugeData, number: {suffix: "%"},
             title: {text: "Tested by RTRI"},
             type: "indicator",
             mode: "gauge+number",
@@ -68,9 +84,9 @@ export default function Dashboard() {
 
     const recent = {
         x: ageGroup,
-        y: recentData,
+        y: ageRecentData,
         type: 'bar',
-        text: recentData.map(String),
+        text: ageRecentData.map(String),
         textposition: 'auto',
         hoverinfo: 'none',
         name: "LT",
@@ -86,9 +102,9 @@ export default function Dashboard() {
 
     const longTerm = {
         x: ageGroup,
-        y: ltData,
+        y: ageLtData,
         type: 'bar',
-        text: ltData.map(String),
+        text: ageLtData.map(String),
         textposition: 'auto',
         hoverinfo: 'none',
         name: "Recent",
@@ -121,7 +137,19 @@ export default function Dashboard() {
                         </Typography>
                     </Grid>
                     <Grid item>
-                        <DateSelection></DateSelection>
+                        <DateSelection
+                        startDate = {startDate}
+                        setStartDate = {setStartDate}
+                        endDate = {endDate}
+                        setEndDate = {setEndDate}
+                        >
+                        </DateSelection>
+                    </Grid>
+
+                    <Grid item className={classes.button}>
+                        <Button variant="contained" >
+                            Go
+                        </Button>
                     </Grid>
                 </Grid>
             </Grid>

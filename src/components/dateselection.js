@@ -7,17 +7,15 @@ import {
     KeyboardDatePicker,
 } from '@material-ui/pickers';
 
-export default function DateSelection() {
+export default function DateSelection(props) {
     // The first commit of Material-UI
-    const [startDate, setStartDate] = useState(new Date('2014-08-18T21:11:54'));
-    const [endDate, setEndDate] = useState(new Date('2014-08-18T21:11:54'));
 
     const handleStartDateChange = (date) => {
-        setStartDate(date);
+        props.setStartDate(date);
     };
 
     const handleEndDateChange = (date) => {
-        setEndDate(date);
+        props.setEndDate(date);
     };
 
     return (
@@ -30,7 +28,7 @@ export default function DateSelection() {
                     margin="normal"
                     id="date-picker-inline"
                     label="From Date"
-                    value={startDate}
+                    value={props.startDate}
                     onChange={handleStartDateChange}
                     KeyboardButtonProps={{
                         'aria-label': 'change date',
@@ -44,7 +42,7 @@ export default function DateSelection() {
                     margin="normal"
                     id="date-picker-inline"
                     label="From Date"
-                    value={endDate}
+                    value={props.endDate}
                     onChange={handleEndDateChange}
                     KeyboardButtonProps={{
                         'aria-label': 'change date',
