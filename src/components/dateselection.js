@@ -24,10 +24,10 @@ export default function DateSelection(props) {
                 <KeyboardDatePicker
                     disableToolbar
                     variant="inline"
-                    format="MM/dd/yyyy"
+                    format="yyyy-MM-dd"
                     margin="normal"
                     id="date-picker-inline"
-                    label="From Date"
+                    label="Start Date"
                     value={props.startDate}
                     onChange={handleStartDateChange}
                     KeyboardButtonProps={{
@@ -38,10 +38,9 @@ export default function DateSelection(props) {
                 <KeyboardDatePicker
                     disableToolbar
                     variant="inline"
-                    format="MM/dd/yyyy"
+                    format="yyyy-MM-dd"
                     margin="normal"
-                    id="date-picker-inline"
-                    label="From Date"
+                    label="End Date"
                     value={props.endDate}
                     onChange={handleEndDateChange}
                     KeyboardButtonProps={{

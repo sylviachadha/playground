@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {makeStyles} from "@material-ui/core/styles";
 import {Button, Grid} from "@material-ui/core";
 import DateSelection from "../components/dateselection";
@@ -25,8 +25,8 @@ const useStyles = makeStyles(theme => ({
         marginLeft: '2rem',
         marginRight: '3rem',
     },
-    DateGrid: {
-       backgroundColor: '#e8eae6'
+     DateGrid: {
+        backgroundColor: '#e8eae6'
     },
     button: {
         marginTop: '1.5rem',
@@ -37,30 +37,30 @@ const useStyles = makeStyles(theme => ({
 
 export default function Dashboard() {
 
-    const [ageRecentData,setAgeRecentData] = useState([])
-    const [ageLtData,setAgeLtData] = useState([])
-    const [rtriGaugeData,setRtriGaugeData] = useState(0)
+    const [ageRecentData, setAgeRecentData] = useState([])
+    const [ageLtData, setAgeLtData] = useState([])
+    const [rtriGaugeData, setRtriGaugeData] = useState(0)
 
-    const [startDate, setStartDate] = useState(new Date('2020-08-18T21:11:54'));
-    const [endDate, setEndDate] = useState(new Date('2021-01-29T21:11:54'));
+    const [startDate, setStartDate] = useState(new Date('2020-08-18'));
+    const [endDate, setEndDate] = useState(new Date('2021-01-29'));
 
     const handleGoDate = async () => {
-            const resp =  await axios.get('http://localhost:8080/python-retrieve-dashboard-data');
-            const respPython = resp.data
-            setAgeRecentData(respPython.age_group.recent)
-            setAgeLtData(respPython.age_group.longTerm)
-            setRtriGaugeData(respPython.gauge)
-        }
+
+        const resp = await axios.get('http://localhost:8080/python-retrieve-dashboard-data', {
+            params: {
+                start_date: startDate.yyyymmdd(),
+                end_date: endDate.yyyymmdd()
+            }
+        });
+        const respPython = resp.data
+        setAgeRecentData(respPython.age_group.recent)
+        setAgeLtData(respPython.age_group.longTerm)
+        setRtriGaugeData(respPython.gauge)
+    }
 
 
     useEffect(() => {
-        (async () => {
-            const resp =  await axios.get('http://localhost:8080/python-retrieve-dashboard-data');
-            const respPython = resp.data
-            setAgeRecentData(respPython.age_group.recent)
-            setAgeLtData(respPython.age_group.longTerm)
-            setRtriGaugeData(respPython.gauge)
-        })();
+        (handleGoDate)();
     }, []);
 
     const classes = useStyles();
@@ -78,8 +78,6 @@ export default function Dashboard() {
     ];
 
     const ageGroup = ['15-25', '25-35', '35-45', '45-55'];
-
-
 
 
     const recent = {
@@ -131,23 +129,23 @@ export default function Dashboard() {
         <Grid container className={classes.mainContainer1} direction={"column"}>
             <Grid item>
                 <Grid container className={classes.DateGrid}>
-                    <Grid item >
-                        <Typography className={classes.Typo}variant="h5">
+                    <Grid item>
+                        <Typography className={classes.Typo} variant="h5">
                             Select Date
                         </Typography>
                     </Grid>
                     <Grid item>
                         <DateSelection
-                        startDate = {startDate}
-                        setStartDate = {setStartDate}
-                        endDate = {endDate}
-                        setEndDate = {setEndDate}
+                            startDate={startDate}
+                            setStartDate={setStartDate}
+                            endDate={endDate}
+                            setEndDate={setEndDate}
                         >
                         </DateSelection>
                     </Grid>
 
                     <Grid item className={classes.button}>
-                        <Button variant="contained" >
+                        <Button variant="contained" onClick={handleGoDate}>
                             Go
                         </Button>
                     </Grid>
@@ -190,3 +188,13 @@ export default function Dashboard() {
         </Grid>
     );
 }
+
+Date.prototype.yyyymmdd = function () {
+    const mm = this.getMonth() + 1; // getMonth() is zero-based
+    const dd = this.getDate();
+
+    return [this.getFullYear(), "-",
+        (mm > 9 ? '' : '0') + mm, "-",
+        (dd > 9 ? '' : '0') + dd
+    ].join('');
+};
