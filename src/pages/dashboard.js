@@ -9,6 +9,10 @@ import axios from "axios";   // HTTP Client
 
 
 import Plot from "react-plotly.js";
+import FormControl from "@material-ui/core/FormControl";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Radio from "@material-ui/core/Radio";
 
 
 const useStyles = makeStyles(theme => ({
@@ -25,7 +29,7 @@ const useStyles = makeStyles(theme => ({
         marginLeft: '2rem',
         marginRight: '3rem',
     },
-     DateGrid: {
+    DateGrid: {
         backgroundColor: '#e8eae6'
     },
     button: {
@@ -41,15 +45,20 @@ export default function Dashboard() {
     const [ageLtData, setAgeLtData] = useState([])
     const [rtriGaugeData, setRtriGaugeData] = useState(0)
 
-    const [startDate, setStartDate] = useState(new Date('2020-08-18'));
-    const [endDate, setEndDate] = useState(new Date('2021-01-29'));
+    const [startDate, setStartDate] = useState(new Date('2020-01-18'));
+    const [endDate, setEndDate] = useState(new Date()); // today's date
 
-    const handleGoDate = async () => {
+    const [radioValue, setRadioValue] = React.useState('all');
+
+
+    const handleDashboardInteraction = async () => {
 
         const resp = await axios.get('http://localhost:8080/python-retrieve-dashboard-data', {
             params: {
+
                 start_date: startDate.yyyymmdd(),
-                end_date: endDate.yyyymmdd()
+                end_date: endDate.yyyymmdd(),
+                radio: radioValue,
             }
         });
         const respPython = resp.data
@@ -60,8 +69,13 @@ export default function Dashboard() {
 
 
     useEffect(() => {
-        (handleGoDate)();
-    }, []);
+        (handleDashboardInteraction)();
+    }, [radioValue]);
+
+
+    const handleRadioChange = (event) => {
+        setRadioValue(event.target.value);
+    };
 
     const classes = useStyles();
 
@@ -145,9 +159,19 @@ export default function Dashboard() {
                     </Grid>
 
                     <Grid item className={classes.button}>
-                        <Button variant="contained" onClick={handleGoDate}>
+                        <Button variant="contained" onClick={handleDashboardInteraction}>
                             Go
                         </Button>
+                    </Grid>
+
+                    <Grid item>
+                        <FormControl component="fieldset">
+                            <RadioGroup row value={radioValue} onChange={handleRadioChange}>
+                                <FormControlLabel value="recent" control={<Radio color="primary"/>} label="Recent"/>
+                                <FormControlLabel value="longTerm" control={<Radio color="primary"/>} label="LongTerm"/>
+                                <FormControlLabel value="all" control={<Radio color="primary"/>} label="All"/>
+                            </RadioGroup>
+                        </FormControl>
                     </Grid>
                 </Grid>
             </Grid>
